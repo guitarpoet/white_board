@@ -1,0 +1,75 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+	<meta charset="UTF-8">
+	<title></title>
+	<link href="http://libs.baidu.com/bootstrap/3.0.3/css/bootstrap.min.css" rel="stylesheet">
+</head>
+<body>
+	<div class="container">
+		<div id="toolbar" class="row"></div>
+		<div id="whiteboard" class="row"></div>
+	</div>
+	<script src="../lib/browser.js"></script>
+	<script src="../lib/polyfill.js"></script>
+	<script src="../lib/react.js"></script>
+	<script src="../lib/lilium.js"></script>
+	<script src="../whiteboard.js"></script>
+	<script src="http://libs.baidu.com/jquery/1.9.0/jquery.js"></script>
+	<script src="http://libs.baidu.com/bootstrap/3.0.3/js/bootstrap.min.js"></script>
+    <script type="text/babel">
+
+		class Toolbar extends React.Component {
+
+			constructor() {
+				super();
+				this.state = {current_tool: null};
+			}
+
+			buttonClass(name) {
+				let pre = '';
+				switch(name) {
+					case 'pencil':
+						pre = 'glyphicon glyphicon-pencil';
+						break;
+					default:
+						pre = 'glyphicon';
+				}
+				if(name == this.state.current_tool)
+					return pre + ' btn btn-primary';
+				return pre + ' btn btn-default';
+			}
+
+			render() {
+				return (<div id={this.props.id} className="btn-group">
+					<button id="pencil" className={this.buttonClass("pencil")} onClick={ (event) => {
+						this.setState({current_tool: 'pencil'});
+						board.startPencil(); }}>Pencil</button>
+					<button id="eraser" className={this.buttonClass("eraser")} onClick={ (event) => {
+						this.setState({current_tool: 'eraser'});
+						board.startEraser(); }}>Eraser</button>
+					<button id="rectangle" className={this.buttonClass("rectangle")} onClick={ (event) => {
+						this.setState({current_tool: 'rectangle'});
+						board.startRectangle(); }}>Rectangle</button>
+					<button id="oval" className={this.buttonClass("oval")} onClick={ (event) => {
+						this.setState({current_tool: 'oval'});
+						board.startOval(); }}>Oval</button>
+				</div>);
+			}
+		}
+
+		events.on(window, 'load', () => {
+			window.board = React.render(
+				<widgets.Whiteboard id="board" height="300px" width="1000"/>,
+				document.getElementById('whiteboard')
+			);
+
+
+			React.render(
+				(<Toolbar id="toolbar" />)
+				,document.getElementById('toolbar')
+			);
+		});
+	</script>
+</body>
+</html>
