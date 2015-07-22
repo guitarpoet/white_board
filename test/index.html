@@ -8,17 +8,25 @@
 <body>
 	<div class="container">
 		<div id="toolbar" class="row"></div>
-		<div id="whiteboard" class="row"></div>
+		<div id="whiteboard" class="row">
+			<img src="loading.gif" alt="Loading...">
+		</div>
 	</div>
 	<script src="../lib/browser.js"></script>
 	<script src="../lib/polyfill.js"></script>
 	<script src="../lib/react.js"></script>
 	<script src="../lib/lilium.js"></script>
-	<script src="../whiteboard.js"></script>
-	<script src="http://libs.baidu.com/jquery/1.9.0/jquery.js"></script>
-	<script src="http://libs.baidu.com/bootstrap/3.0.3/js/bootstrap.min.js"></script>
-    <script type="text/babel">
+	<script src="http://localhost:3000/socket.io/socket.io.js"></script>
+	<script>
+		window.socket = io("http://localhost:3000/");
+		socket.emit('chat message', { for: 'everyone' });
+		socket.on('chat message', function(message)  {
+			alert(message);
+		}); 
+	</script>
 
+	<script src="../whiteboard.js"></script>
+    <script type="text/babel">
 		class Toolbar extends React.Component {
 
 			constructor() {
@@ -54,18 +62,19 @@
 					<button id="oval" className={this.buttonClass("oval")} onClick={ (event) => {
 						this.setState({current_tool: 'oval'});
 						board.startOval(); }}>Oval</button>
+					<button id="test" className={this.buttonClass("oval")} onClick={ (event) => { socket.emit('chat message', 'world'); }}>Oval</button>
 				</div>);
 			}
 		}
 
+		socket.emit('chat message', 'world'); 
 		events.on(window, 'load', () => {
 			window.board = React.render(
-				<widgets.Whiteboard id="board" height="300px" width="1000"/>,
+				<widgets.Whiteboard id="board" height="300px" width="1000px"/>,
 				document.getElementById('whiteboard')
 			);
 
-
-			React.render(
+			window.toolbar = React.render(
 				(<Toolbar id="toolbar" />)
 				,document.getElementById('toolbar')
 			);
